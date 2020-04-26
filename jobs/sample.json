@@ -1,0 +1,13 @@
+{
+  "defaultSpawnOptions" : { "cwd" : "~/projects/myproject" },
+  "commands": {
+    "UI" : [ "npm", ["start"],  { "cwd" : "~/projects/myproject/reactproject" } ],
+    "API" : [ "npm", ["run", "dev"] ],
+    "ssh-tunnel" : {
+      "command" : [ "ssh", [ "-L", "localhost:5432:localhost:5432", "root@192.168.0.1" ] ],
+      "pre" : [
+        ["echo", ["Connecting to distant server..."]]
+      ]
+    }
+  }
+}
