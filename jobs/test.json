@@ -1,0 +1,21 @@
+{
+  "exitStrategy" : "race",
+  "commands": {
+    "display-node-version" : [ "node", ["-v"] ],
+    "display-npm-version" : [ "npm", ["-v"] ],
+    "say-hello" : {
+      "command" : [ "sleep", [ "5" ] ],
+      "pre" : [
+        ["echo", ["Hello world!"]],
+        ["echo", ["Sleeping..."]]
+      ]
+    },
+    "say-bonjour" : {
+      "command" : [ "sleep", [ "10" ] ],
+      "pre" : [
+        ["echo", ["Bonjour!"]],
+        ["echo", ["Sleeping..."]]
+      ]
+    }
+  }
+}
