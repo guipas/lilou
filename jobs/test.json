@@ -1,5 +1,5 @@
 {
-  "exitStrategy" : "race",
+  "exitStrategy" : "all",
   "commands": {
     "display-node-version" : [ "node", ["-v"] ],
     "display-npm-version" : [ "npm", ["-v"] ],

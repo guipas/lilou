@@ -24,6 +24,7 @@ console.log('----');
 
       // console.log('jobs: ', jobConfig);
       const defers = [];
+      const children = [];
       let j = 0;
 
       for (const job in jobConfig.commands) {
@@ -40,7 +41,7 @@ console.log('----');
         for (const pre of preCommands) {
           log(`[${job}] [pre] ---`);
           log(`[${job}] [pre] running pre job ${i++}`);
-          await runCommand({
+          const { child, promise } = runCommand({
             command: pre,
             logger: {
               log: (...args) => log(`[${job}] [pre] `, ...args.map(a => cleanString(a))),
@@ -48,17 +49,26 @@ console.log('----');
             },
             defaultSpawnOptions: jobConfig.defaultSpawnOptions || {},
           })
+          children.push(child);
+          await promise.catch(e => {
+            console.error(e);
+          })
         } 
 
         // console.log('trying to spawn', command);
+        const mainCommandResult = runCommand({
+          command: mainCommand,
+          logger: {
+            log: (...args) => log(`[${job}] `, ...args.map(a => cleanString(a))),
+            error: (...args) => error(`[${job}] `, ...args.map(a => cleanString(a))),
+          },
+          defaultSpawnOptions: jobConfig.defaultSpawnOptions || {},
+        });
+        children.push(mainCommandResult.child);
         defers.push(
-          runCommand({
-            command: mainCommand,
-            logger: {
-              log: (...args) => log(`[${job}] `, ...args.map(a => cleanString(a))),
-              error: (...args) => error(`[${job}] `, ...args.map(a => cleanString(a))),
-            },
-            defaultSpawnOptions: jobConfig.defaultSpawnOptions || {},
+          mainCommandResult.promise
+          .catch(e => {
+            console.error(e);
           })
           .finally(() => {
             log(`[${job}] exited `);
@@ -69,6 +79,8 @@ console.log('----');
       }
 
       await Promise[jobConfig.exitStrategy || 'all'](defers);
+
+
     }
     
   }
